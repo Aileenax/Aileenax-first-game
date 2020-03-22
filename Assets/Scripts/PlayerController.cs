@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public float jumpForce;
     public float gravityModifier;
+    public GameObject projectilePrefab;
+
     private bool isOnGround = true;
     private Rigidbody playerRb;
 
@@ -38,6 +40,13 @@ public class PlayerController : MonoBehaviour
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isOnGround = false;
         }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1);
+
+            Instantiate(projectilePrefab, position, projectilePrefab.transform.rotation);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -47,5 +56,10 @@ public class PlayerController : MonoBehaviour
         {
             isOnGround = true;
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Destroy(other.gameObject);
     }
 }
