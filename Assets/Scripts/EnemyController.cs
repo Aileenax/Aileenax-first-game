@@ -18,8 +18,18 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Enemy moves towards the player
         Vector3 lookDirection = (player.transform.position - transform.position).normalized;
 
         enemyRb.AddForce(lookDirection * speed);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // If a projectile collides with the enemy, destroy the enemy
+        if (collision.gameObject.CompareTag("Projectile"))
+        {
+            Destroy(gameObject);
+        }
     }
 }

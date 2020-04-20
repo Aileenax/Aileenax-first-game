@@ -20,11 +20,9 @@ public class FireProjectile : MonoBehaviour
         projectileRb.AddForce(Vector3.forward * speed, ForceMode.Impulse);
     }
 
+    // Destroy the projectile if it hits anything
     private void OnCollisionEnter(Collision collision)
     {
-        if (!collision.gameObject.CompareTag("Player") && !collision.gameObject.CompareTag("Projectile"))
-        {
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 }

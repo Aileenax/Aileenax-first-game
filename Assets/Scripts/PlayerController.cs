@@ -1,21 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
+    private bool isOnGround = true;
+    private Rigidbody playerRb;
+    private int numberOfLivesLeft = 3;
+
     public float speed;
     public float jumpForce;
     public float gravityModifier;
     public GameObject projectilePrefab;
-
-    private bool isOnGround = true;
-    private Rigidbody playerRb;
+    public TextMeshProUGUI livesText;
 
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
+
         Physics.gravity *= gravityModifier;
     }
 
@@ -31,8 +35,8 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        playerRb.AddForce(Vector3.forward * speed * verticalInput);
-        playerRb.AddForce(Vector3.right * speed * horizontalInput);
+        playerRb.AddForce(Vector3.forward * speed * verticalInput, ForceMode.Impulse);
+        playerRb.AddForce(Vector3.right * speed * horizontalInput, ForceMode.Impulse);
 
         // Player must be on the ground before being allowed to jump again
         if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
@@ -43,23 +47,36 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1);
-
-            Instantiate(projectilePrefab, position, projectilePrefab.transform.rotation);
+            Instantiate(projectilePrefab, transform.position + new Vector3(0, 1, 1), projectilePrefab.transform.rotation);
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        // If player has touched the ground set isOnGround back to true
-        if (collision.gameObject.CompareTag("Ground"))
+        // If player has collided with anything then allow it to jump again
+        isOnGround = true;
+
+        // If enemy has touched player, player loses 1 health
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            isOnGround = true;
+            UpdateLivesLeft(-1);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Destroy(other.gameObject);
+        // If player collects a powerup, +1 to life and destroy the powerup
+        if (other.gameObject.CompareTag("Powerup"))
+        {
+            UpdateLivesLeft(1);
+            Destroy(other.gameObject);
+        }
+    }
+
+    // Update lives text on UI
+    private void UpdateLivesLeft(int lives)
+    {
+        numberOfLivesLeft += lives;
+        livesText.text = $"Lives: {numberOfLivesLeft}/3";
     }
 }
