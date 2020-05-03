@@ -1,48 +1,84 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    public GameObject enemyPrefab;
-    public GameObject powerupPrefab;
+    [SerializeField]
+    private GameObject enemyPrefab;
 
-    private float xSpawnRange = 19.0f;
-    private float zTop = 7.0f;
-    private float zBottom = -16.0f;
-    private float y = 4.5f;
-    private float spawnDelay = 2.0f;
-    private float enemySpawnTime = 3.0f;
-    private float powerupSpawnTime = 5.0f;
+    [SerializeField]
+    private GameObject powerupPrefab;
+
+    private float _xSpawnRange = 19.0f;
+    private float _zTop = 7.0f;
+    private float _zBottom = -16.0f;
+    private float _y = 4.5f;
+    private float _spawnDelay = 2.0f;
+    private float _powerupSpawnTime;
+    private float _enemySpawnTime;
+    private string _gameDifficulty;
 
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("SpawnEnemy", spawnDelay, enemySpawnTime);
-        InvokeRepeating("SpawnPowerup", spawnDelay, powerupSpawnTime);
+        ChangeSpawnAccordingToDifficulty();
+
+        InvokeRepeating("SpawnEnemy", _spawnDelay, _enemySpawnTime);
+        InvokeRepeating("SpawnPowerup", _spawnDelay, _powerupSpawnTime);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void ChangeSpawnAccordingToDifficulty()
     {
+        _gameDifficulty = GameDifficulty.Instance.Difficulty;
 
+        if (_gameDifficulty == "Easy")
+        {
+            _enemySpawnTime = 5.0f;
+            _powerupSpawnTime = 5.0f;
+        }
+        else if (_gameDifficulty == "Medium")
+        {
+            _enemySpawnTime = 3.0f;
+            _powerupSpawnTime = 7.0f;
+        }
+        else if (_gameDifficulty == "Hard")
+        {
+            _enemySpawnTime = 1.0f;
+            _powerupSpawnTime = 10.0f;
+        }
     }
 
-    void SpawnEnemy()
+    private void SpawnEnemy()
     {
-        float randomX = Random.Range(-xSpawnRange, xSpawnRange);
-        float randomZ = Random.Range(zBottom, zTop);
-        Vector3 spawnPos = new Vector3(randomX, y, randomZ);
+        float randomX = UnityEngine.Random.Range(-_xSpawnRange, _xSpawnRange);
+        float randomZ = UnityEngine.Random.Range(_zBottom, _zTop);
+        Vector3 spawnPos = new Vector3(randomX, _y, randomZ);
 
-        Instantiate(enemyPrefab, spawnPos, enemyPrefab.transform.rotation);
+        GameObject pooledEnemy = ObjectPooler.SharedInstance.GetPooledObject("Enemy");
+
+        if (pooledEnemy != null)
+        {
+            pooledEnemy.SetActive(true);
+            pooledEnemy.transform.position = spawnPos;
+            pooledEnemy.transform.rotation = enemyPrefab.transform.rotation;
+        }
     }
 
-    void SpawnPowerup()
+    private void SpawnPowerup()
     {
-        float randomX = Random.Range(-xSpawnRange, xSpawnRange);
-        float randomZ = Random.Range(zBottom, zTop);
-        Vector3 spawnPos = new Vector3(randomX, y, randomZ);
+        float randomX = UnityEngine.Random.Range(-_xSpawnRange, _xSpawnRange);
+        float randomZ = UnityEngine.Random.Range(_zBottom, _zTop);
+        Vector3 spawnPos = new Vector3(randomX, _y, randomZ);
 
-        Instantiate(powerupPrefab, spawnPos, powerupPrefab.transform.rotation);
+        GameObject pooledPowerup = ObjectPooler.SharedInstance.GetPooledObject("Powerup");
+
+        if (pooledPowerup != null)
+        {
+            pooledPowerup.SetActive(true);
+            pooledPowerup.transform.position = spawnPos;
+            pooledPowerup.transform.rotation = powerupPrefab.transform.rotation;
+        }
     }
 }

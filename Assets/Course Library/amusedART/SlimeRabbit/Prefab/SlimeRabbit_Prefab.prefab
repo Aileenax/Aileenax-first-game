@@ -383,7 +383,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4892504893775866}
   - component: {fileID: 95131097399638280}
-  - component: {fileID: 1356411629537733441}
   m_Layer: 0
   m_Name: SlimeRabbit_Prefab
   m_TagString: Untagged
@@ -426,19 +425,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!65 &1356411629537733441
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773656247975474}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5467721, y: 0.6946658, z: 0.44434488}
-  m_Center: {x: -0.001638174, y: 0.3475812, z: -0.023381442}
 --- !u!1 &1779164207820988
 GameObject:
   m_ObjectHideFlags: 0
